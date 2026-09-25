@@ -4,3 +4,4 @@ dev.db
 /uploads
 dist/
 .DS_Store
+*build-prompt*.md
