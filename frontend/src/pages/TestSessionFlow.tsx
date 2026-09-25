@@ -8,7 +8,9 @@ const TEST_TYPES = [
   { id: 'REPEATABILITY', label: 'Repeatability' },
   { id: 'ECCENTRICITY', label: 'Eccentricity' },
   { id: 'WEIGHING_PERFORMANCE', label: 'Weighing Performance' },
-  { id: 'ZERO_SETTING', label: 'Zero Setting' }
+  { id: 'ZERO_SETTING', label: 'Zero Setting' },
+  { id: 'ZERO_TRACKING', label: 'Zero Tracking' },
+  { id: 'VISUAL_INSPECTION', label: 'Visual Inspection' }
 ];
 
 export const TestSessionFlow: React.FC = () => {
@@ -29,7 +31,7 @@ export const TestSessionFlow: React.FC = () => {
     labHumidity: '',
     labAtmosphericPressure: ''
   });
-  const [selectedTests, setSelectedTests] = useState<string[]>(['REPEATABILITY', 'ECCENTRICITY', 'WEIGHING_PERFORMANCE', 'ZERO_SETTING']);
+  const [selectedTests, setSelectedTests] = useState<string[]>(['REPEATABILITY', 'ECCENTRICITY', 'WEIGHING_PERFORMANCE', 'ZERO_SETTING', 'ZERO_TRACKING', 'VISUAL_INSPECTION']);
 
   // Step 2: Test Data State
   const [currentTestIndex, setCurrentTestIndex] = useState(0);
@@ -98,7 +100,7 @@ export const TestSessionFlow: React.FC = () => {
     setReadings([...readings, { loadPoint: readings.length + 1, referenceValue: '', indicatedValue: '' }]);
   };
 
-  const handleReadingChange = (index: number, field: string, value: string) => {
+  const handleReadingChange = (index: number, field: string, value: string | number) => {
     const newReadings = [...readings];
     newReadings[index] = { ...newReadings[index], [field]: value };
     setReadings(newReadings);
@@ -114,24 +116,37 @@ export const TestSessionFlow: React.FC = () => {
     if (!sessionId) return;
     setError('');
     
+    const currentTest = selectedTests[currentTestIndex];
+
     // Validate rows
-    const validReadings = readings.filter(r => r.referenceValue !== '' && r.indicatedValue !== '');
+    const validReadings = currentTest === 'VISUAL_INSPECTION' 
+      ? readings 
+      : readings.filter(r => r.referenceValue !== '' && r.indicatedValue !== '');
+      
     if (validReadings.length === 0) {
       setError('At least one valid reading is required');
       return;
     }
 
-    const overCapacity = validReadings.some(r => parseFloat(r.referenceValue) > instrument.maxCapacity);
-    if (overCapacity) {
-      setError(`Readings cannot exceed Max Capacity (${instrument.maxCapacity} kg)`);
-      return;
+    let payload;
+    if (currentTest === 'VISUAL_INSPECTION') {
+      payload = readings.map(r => ({
+        loadPoint: r.loadPoint,
+        referenceValue: 0,
+        indicatedValue: r.indicatedValue === 'PASS' ? 0 : 1
+      }));
+    } else {
+      const overCapacity = validReadings.some(r => parseFloat(r.referenceValue) > instrument.maxCapacity);
+      if (overCapacity) {
+        setError(`Readings cannot exceed Max Capacity (${instrument.maxCapacity} kg)`);
+        return;
+      }
+      payload = validReadings.map(r => ({
+        loadPoint: r.loadPoint,
+        referenceValue: parseFloat(r.referenceValue),
+        indicatedValue: parseFloat(r.indicatedValue)
+      }));
     }
-
-    const payload = validReadings.map(r => ({
-      loadPoint: r.loadPoint,
-      referenceValue: parseFloat(r.referenceValue),
-      indicatedValue: parseFloat(r.indicatedValue)
-    }));
 
     setIsLoading(true);
     try {
@@ -154,8 +169,18 @@ export const TestSessionFlow: React.FC = () => {
         setCompletedTests([...completedTests, currentTest]);
         
         if (currentTestIndex < selectedTests.length - 1) {
+          const nextTest = selectedTests[currentTestIndex + 1];
           setCurrentTestIndex(currentTestIndex + 1);
-          setReadings([{ loadPoint: 1, referenceValue: '', indicatedValue: '' }]);
+          if (nextTest === 'VISUAL_INSPECTION') {
+             setReadings([
+                { loadPoint: 'Level Indicator', referenceValue: '', indicatedValue: 'PASS' },
+                { loadPoint: 'Zero-setting Device', referenceValue: '', indicatedValue: 'PASS' },
+                { loadPoint: 'Display Segments', referenceValue: '', indicatedValue: 'PASS' },
+                { loadPoint: 'Descriptive Markings', referenceValue: '', indicatedValue: 'PASS' }
+             ]);
+          } else {
+             setReadings([{ loadPoint: 1, referenceValue: '', indicatedValue: '' }]);
+          }
         } else {
           setStep(3); // All tests done, go to review
         }
@@ -288,7 +313,9 @@ export const TestSessionFlow: React.FC = () => {
               <p className="text-sm text-textSecondary">Enter load points and indicated values. Validating against Class {instrument?.accuracyClass} / e={instrument?.eValue}kg.</p>
             </div>
             <div className="bg-white px-3 py-1.5 rounded-full border border-border text-sm font-medium text-primary shadow-sm">
-              {readings.filter(r => r.referenceValue && r.indicatedValue).length} / {readings.length} points recorded
+              {selectedTests[currentTestIndex] === 'VISUAL_INSPECTION' 
+                ? `${readings.length} items checked` 
+                : `${readings.filter(r => r.referenceValue && r.indicatedValue).length} / ${readings.length} points recorded`}
             </div>
           </div>
 
@@ -296,11 +323,11 @@ export const TestSessionFlow: React.FC = () => {
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-gray-50 border-b border-border">
                 <tr>
-                  <th className="px-6 py-4 font-medium text-textSecondary">Pt.</th>
-                  <th className="px-6 py-4 font-medium text-textSecondary">Reference Load (kg)</th>
-                  <th className="px-6 py-4 font-medium text-textSecondary">Indicated Value (kg)</th>
-                  <th className="px-6 py-4 font-medium text-textSecondary">Calc. Error</th>
-                  <th className="px-6 py-4 font-medium text-textSecondary">MPE</th>
+                  <th className="px-6 py-4 font-medium text-textSecondary">{selectedTests[currentTestIndex] === 'VISUAL_INSPECTION' ? 'Item' : 'Pt.'}</th>
+                  <th className="px-6 py-4 font-medium text-textSecondary">{selectedTests[currentTestIndex] === 'VISUAL_INSPECTION' ? 'Requirement' : 'Reference Load (kg)'}</th>
+                  <th className="px-6 py-4 font-medium text-textSecondary">{selectedTests[currentTestIndex] === 'VISUAL_INSPECTION' ? 'Observation' : 'Indicated Value (kg)'}</th>
+                  {selectedTests[currentTestIndex] !== 'VISUAL_INSPECTION' && <th className="px-6 py-4 font-medium text-textSecondary">Calc. Error</th>}
+                  {selectedTests[currentTestIndex] !== 'VISUAL_INSPECTION' && <th className="px-6 py-4 font-medium text-textSecondary">MPE</th>}
                   <th className="px-6 py-4 font-medium text-textSecondary">Live Result</th>
                   <th className="px-6 py-4"></th>
                 </tr>
@@ -310,14 +337,17 @@ export const TestSessionFlow: React.FC = () => {
                   let pass = true;
                   let errorVal = 0;
                   let mpeVal = 0;
-                  const hasData = reading.referenceValue !== '' && reading.indicatedValue !== '';
+                  const isVisual = selectedTests[currentTestIndex] === 'VISUAL_INSPECTION';
+                  const hasData = isVisual ? true : (reading.referenceValue !== '' && reading.indicatedValue !== '');
                   
-                  if (hasData && instrument) {
+                  if (isVisual) {
+                     pass = reading.indicatedValue === 'PASS';
+                  } else if (hasData && instrument) {
                     const result = isReadingPass(
                       instrument.accuracyClass as AccuracyClass, 
                       instrument.eValue, 
-                      parseFloat(reading.referenceValue), 
-                      parseFloat(reading.indicatedValue)
+                      parseFloat(reading.referenceValue as string), 
+                      parseFloat(reading.indicatedValue as string)
                     );
                     pass = result.pass;
                     errorVal = result.error;
@@ -328,29 +358,48 @@ export const TestSessionFlow: React.FC = () => {
                     <tr key={idx} className="hover:bg-gray-50/50">
                       <td className="px-6 py-4 font-medium text-textSecondary">{reading.loadPoint}</td>
                       <td className="px-6 py-2">
-                        <input 
-                          type="number" step="any" min="0" 
-                          className="input-field py-1.5" 
-                          placeholder="e.g. 10.0"
-                          value={reading.referenceValue}
-                          onChange={(e) => handleReadingChange(idx, 'referenceValue', e.target.value)}
-                        />
+                        {isVisual ? (
+                           <span className="text-textSecondary">Must be present & functional</span>
+                        ) : (
+                          <input 
+                            type="number" step="any" min="0" 
+                            className="input-field py-1.5" 
+                            placeholder="e.g. 10.0"
+                            value={reading.referenceValue}
+                            onChange={(e) => handleReadingChange(idx, 'referenceValue', e.target.value)}
+                          />
+                        )}
                       </td>
                       <td className="px-6 py-2">
-                        <input 
-                          type="number" step="any" min="0" 
-                          className="input-field py-1.5"
-                          placeholder="e.g. 10.1"
-                          value={reading.indicatedValue}
-                          onChange={(e) => handleReadingChange(idx, 'indicatedValue', e.target.value)}
-                        />
+                        {isVisual ? (
+                          <select 
+                            className="input-field py-1.5"
+                            value={reading.indicatedValue}
+                            onChange={(e) => handleReadingChange(idx, 'indicatedValue', e.target.value)}
+                          >
+                            <option value="PASS">Pass / OK</option>
+                            <option value="FAIL">Fail / Defective</option>
+                          </select>
+                        ) : (
+                          <input 
+                            type="number" step="any" min="0" 
+                            className="input-field py-1.5"
+                            placeholder="e.g. 10.1"
+                            value={reading.indicatedValue}
+                            onChange={(e) => handleReadingChange(idx, 'indicatedValue', e.target.value)}
+                          />
+                        )}
                       </td>
-                      <td className="px-6 py-4 font-mono text-textPrimary">
-                        {hasData ? errorVal.toFixed(4) : '-'}
-                      </td>
-                      <td className="px-6 py-4 font-mono text-textSecondary">
-                        {hasData ? `±${mpeVal.toFixed(4)}` : '-'}
-                      </td>
+                      {!isVisual && (
+                        <>
+                          <td className="px-6 py-4 font-mono text-textPrimary">
+                            {hasData ? errorVal.toFixed(4) : '-'}
+                          </td>
+                          <td className="px-6 py-4 font-mono text-textSecondary">
+                            {hasData ? `±${mpeVal.toFixed(4)}` : '-'}
+                          </td>
+                        </>
+                      )}
                       <td className="px-6 py-4">
                         {hasData && (
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${pass ? 'bg-success/10 text-success' : 'bg-fail/10 text-fail'}`}>
@@ -370,9 +419,12 @@ export const TestSessionFlow: React.FC = () => {
           </div>
 
           <div className="p-6 border-t border-border flex justify-between items-center bg-gray-50">
-            <button onClick={handleAddReading} className="btn-secondary text-sm">
-              + Add Row
-            </button>
+            {selectedTests[currentTestIndex] !== 'VISUAL_INSPECTION' && (
+              <button onClick={handleAddReading} className="btn-secondary text-sm">
+                + Add Row
+              </button>
+            )}
+            {selectedTests[currentTestIndex] === 'VISUAL_INSPECTION' && <div></div>}
             <button 
               onClick={submitCurrentTest} 
               disabled={isLoading}

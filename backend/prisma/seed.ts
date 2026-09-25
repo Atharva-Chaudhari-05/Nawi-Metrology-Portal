@@ -220,6 +220,27 @@ async function main() {
             calculatedError: 0,
             permissibleError: 5,
             result: 'PASS',
+          },
+          {
+            testType: 'ZERO_TRACKING',
+            rawReadings: JSON.stringify([
+              { loadPoint: 0, indicatedValue: 0, referenceValue: 0 },
+            ]),
+            calculatedError: 0,
+            permissibleError: 5,
+            result: 'PASS',
+          },
+          {
+            testType: 'VISUAL_INSPECTION',
+            rawReadings: JSON.stringify([
+              { loadPoint: 'Level Indicator', indicatedValue: 0, referenceValue: 0 },
+              { loadPoint: 'Zero-setting Device', indicatedValue: 0, referenceValue: 0 },
+              { loadPoint: 'Display Segments', indicatedValue: 0, referenceValue: 0 },
+              { loadPoint: 'Descriptive Markings', indicatedValue: 0, referenceValue: 0 }
+            ]),
+            calculatedError: 0,
+            permissibleError: 0,
+            result: 'PASS',
           }
         ]
       }

@@ -105,16 +105,25 @@ router.post('/:id/results', authenticateToken, requireRole(['OFFICER', 'ADMIN'])
     let isPass = true;
 
     // Process each reading
-    for (const reading of rawReadings) {
-      const { pass, error, mpe } = isReadingPass(
-        accClass,
-        e,
-        reading.referenceValue,
-        reading.indicatedValue
-      );
-      if (error > maxError) maxError = error;
-      if (mpe > maxMpe) maxMpe = mpe;
-      if (!pass) isPass = false;
+    if (testType === 'VISUAL_INSPECTION') {
+      // For visual inspection, indicatedValue of 0 means Pass, 1 means Fail
+      for (const reading of rawReadings) {
+        if (reading.indicatedValue !== 0) {
+          isPass = false;
+        }
+      }
+    } else {
+      for (const reading of rawReadings) {
+        const { pass, error, mpe } = isReadingPass(
+          accClass,
+          e,
+          reading.referenceValue,
+          reading.indicatedValue
+        );
+        if (Math.abs(error) > maxError) maxError = Math.abs(error);
+        if (mpe > maxMpe) maxMpe = mpe;
+        if (!pass) isPass = false;
+      }
     }
 
     const result = await prisma.testResult.create({
