@@ -264,12 +264,19 @@ function getReportHtml(data: any): string {
 
             const pass = passStr === 'PASS';
             const badgeClass = pass ? 'badge-pass' : 'badge-fail';
+            
+            const isVisual = tr.testType === 'VISUAL_INSPECTION';
+            const refValStr = isVisual ? 'N/A' : r.referenceValue;
+            const indValStr = isVisual ? (r.indicatedValue === 0 ? 'Pass' : 'Fail') : r.indicatedValue;
+            const errStr = isVisual ? '-' : error;
+            const mpeStr = isVisual ? '-' : '±' + mpeVal;
+
             return '<tr>' +
               '<td>' + r.loadPoint + '</td>' +
-              '<td>' + r.referenceValue + '</td>' +
-              '<td>' + r.indicatedValue + '</td>' +
-              '<td>' + error + '</td>' +
-              '<td>±' + mpeVal + '</td>' +
+              '<td>' + refValStr + '</td>' +
+              '<td>' + indValStr + '</td>' +
+              '<td>' + errStr + '</td>' +
+              '<td>' + mpeStr + '</td>' +
               '<td><span class="badge ' + badgeClass + '">' + passStr + '</span></td>' +
             '</tr>';
           }).join('')}

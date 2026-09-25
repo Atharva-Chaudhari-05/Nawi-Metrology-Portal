@@ -41,13 +41,19 @@ export async function createDocxFile(data: any, uploadsDir: string, fileName: st
           passStr = calc.pass ? 'PASS' : 'FAIL';
       }
 
+      const isVisual = tr.testType === 'VISUAL_INSPECTION';
+      const refValStr = isVisual ? 'N/A' : r.referenceValue.toString();
+      const indValStr = isVisual ? (r.indicatedValue === 0 ? 'Pass' : 'Fail') : r.indicatedValue.toString();
+      const errStr = isVisual ? '-' : error.toString();
+      const mpeStr = isVisual ? '-' : '±' + mpeVal.toString();
+
       return new TableRow({
         children: [
           r.loadPoint.toString(),
-          r.referenceValue.toString(),
-          r.indicatedValue.toString(),
-          error.toString(),
-          "±" + mpeVal.toString(),
+          refValStr,
+          indValStr,
+          errStr,
+          mpeStr,
           passStr
         ].map(text => new TableCell({
           children: [new Paragraph({ text })],
@@ -78,6 +84,7 @@ export async function createDocxFile(data: any, uploadsDir: string, fileName: st
           new ImageRun({
             data: Buffer.from(base64Data, 'base64'),
             transformation: { width: 200, height: 80 },
+            type: 'png' as const
           })
         ],
         spacing: { before: 200 }

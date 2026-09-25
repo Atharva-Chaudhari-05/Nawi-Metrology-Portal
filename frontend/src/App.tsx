@@ -12,6 +12,7 @@ import { TestSessionList } from './pages/TestSessionList';
 import { TestSessionFlow } from './pages/TestSessionFlow';
 import { SupervisorReview } from './pages/SupervisorReview';
 import { Reports } from './pages/Reports';
+import { Settings } from './pages/Settings';
 
 function App() {
   return (
@@ -46,6 +47,9 @@ function App() {
               </Route>
               
               <Route path="/reports" element={<Reports />} />
+              <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
+                <Route path="/settings" element={<Settings />} />
+              </Route>
               
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
             </Route>
