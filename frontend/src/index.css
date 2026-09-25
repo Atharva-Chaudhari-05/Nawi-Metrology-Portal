@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #F7F8F6;
+  --color-surface: #FFFFFF;
+  --color-primary: #1F5F5B;
+  --color-secondary: #B8860B;
+  --color-success: #2E7D4F;
+  --color-fail: #B3402A;
+  --color-textPrimary: #1C1F1E;
+  --color-textSecondary: #5B615E;
+  --color-border: #E4E7E2;
+
+  --font-sans: "Inter", "IBM Plex Sans", sans-serif;
+  --font-serif: "Fraunces", "Source Serif 4", serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-textPrimary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    color: var(--color-textPrimary);
+  }
+}
+
+@layer components {
+  .input-field {
+    @apply w-full px-3 py-2 border border-border rounded-md bg-surface text-textPrimary focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-shadow text-sm;
+  }
+  
+  .btn-primary {
+    @apply px-4 py-2 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 bg-surface border border-border text-textPrimary rounded-md font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  .card {
+    @apply bg-surface border border-border rounded-lg shadow-sm;
+  }
+}
