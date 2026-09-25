@@ -128,34 +128,64 @@ export const SupervisorReview: React.FC = () => {
         </div>
         
         {session.status === 'APPROVED' && session.report && (
-          <button 
-            onClick={async () => {
-              try {
-                const res = await fetch(`http://localhost:3001/api/test-sessions/${session.id}/report`, {
-                  headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (res.ok) {
-                  const blob = await res.blob();
-                  const url = window.URL.createObjectURL(blob);
-                  const a = document.createElement('a');
-                  a.href = url;
-                  a.download = `Report_${session.report.reportNumber.replace(/\//g, '_')}.pdf`;
-                  document.body.appendChild(a);
-                  a.click();
-                  window.URL.revokeObjectURL(url);
-                  a.remove();
-                } else {
-                  setError('Failed to download report.');
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={async () => {
+                try {
+                  const res = await fetch(`http://localhost:3001/api/test-sessions/${session.id}/report`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                  });
+                  if (res.ok) {
+                    const blob = await res.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Report_${session.report.reportNumber.replace(/\//g, '_')}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    a.remove();
+                  } else {
+                    setError('Failed to download PDF.');
+                  }
+                } catch (e) {
+                  setError('Network error downloading report.');
                 }
-              } catch (e) {
-                setError('Network error downloading report.');
-              }
-            }}
-            className="flex items-center space-x-2 bg-primary hover:bg-teal-800 text-white px-4 py-2 rounded-md font-medium transition-colors"
-          >
-            <Download className="w-4 h-4" />
-            <span>Download PDF</span>
-          </button>
+              }}
+              className="flex items-center space-x-2 bg-primary hover:bg-teal-800 text-white px-4 py-2 rounded-md font-medium transition-colors"
+            >
+              <Download className="w-4 h-4" />
+              <span>Download PDF</span>
+            </button>
+            <button 
+              onClick={async () => {
+                try {
+                  const res = await fetch(`http://localhost:3001/api/test-sessions/${session.id}/report/docx`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                  });
+                  if (res.ok) {
+                    const blob = await res.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Report_${session.report.reportNumber.replace(/\//g, '_')}.docx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    a.remove();
+                  } else {
+                    setError('Failed to download Word Document.');
+                  }
+                } catch (e) {
+                  setError('Network error downloading report.');
+                }
+              }}
+              className="flex items-center space-x-2 bg-white border border-primary text-primary hover:bg-primary/5 px-4 py-2 rounded-md font-medium transition-colors"
+            >
+              <Download className="w-4 h-4" />
+              <span>Download Word</span>
+            </button>
+          </div>
         )}
       </div>
 

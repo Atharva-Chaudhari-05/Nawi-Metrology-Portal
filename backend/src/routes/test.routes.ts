@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import { authenticateToken, requireRole, AuthRequest } from '../middleware/auth.middleware';
 import { isReadingPass, AccuracyClass } from '../utils/oiml-calculator';
 import { serializeReadings, parseReadings } from '../utils/serialization';
-import { generatePdfReport } from '../utils/pdfGenerator';
+import { generateReports } from '../utils/pdfGenerator';
 import path from 'path';
 
 const router = Router();
@@ -191,7 +191,7 @@ router.patch('/:id/review', authenticateToken, requireRole(['ADMIN']), async (re
 
     if (newStatus === 'APPROVED') {
       try {
-        await generatePdfReport(sessionId);
+        await generateReports(sessionId);
       } catch (reportErr) {
         console.error('Failed to generate report:', reportErr);
       }
@@ -204,7 +204,7 @@ router.patch('/:id/review', authenticateToken, requireRole(['ADMIN']), async (re
   }
 });
 
-// GET download report
+// GET download pdf report
 router.get('/:id/report', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const report = await prisma.report.findUnique({
@@ -215,6 +215,24 @@ router.get('/:id/report', authenticateToken, async (req: AuthRequest, res) => {
     }
     
     const filePath = path.join(__dirname, '../../', report.pdfUrl);
+    res.download(filePath);
+  } catch (error) {
+    console.error('Download report error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// GET download docx report
+router.get('/:id/report/docx', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const report = await prisma.report.findUnique({
+      where: { testSessionId: req.params.id }
+    });
+    if (!report || !report.docxUrl) {
+      return res.status(404).json({ error: 'Report not found' });
+    }
+    
+    const filePath = path.join(__dirname, '../../', report.docxUrl);
     res.download(filePath);
   } catch (error) {
     console.error('Download report error:', error);

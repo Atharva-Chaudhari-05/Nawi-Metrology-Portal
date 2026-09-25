@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { PrismaClient } from '@prisma/client';
 import { isReadingPass, AccuracyClass } from './oiml-calculator';
+import { createDocxFile } from './docxGenerator';
 
 const prisma = new PrismaClient();
 
@@ -304,7 +305,7 @@ function getReportHtml(data: any): string {
   `;
 }
 
-export async function generatePdfReport(sessionId: string) {
+export async function generateReports(sessionId: string) {
   // Fetch fully populated session
   const session = await prisma.testSession.findUnique({
     where: { id: sessionId },
@@ -366,18 +367,23 @@ export async function generatePdfReport(sessionId: string) {
   });
   await browser.close();
 
+  const docxFileName = reportNumber.replace(/\//g, '-') + '.docx';
+  await createDocxFile(data, uploadsDir, docxFileName);
+
   // Create or update report record
   const report = await prisma.report.upsert({
     where: { testSessionId: session.id },
     update: {
       reportNumber,
       pdfUrl: '/uploads/reports/' + pdfFileName,
+      docxUrl: '/uploads/reports/' + docxFileName,
       approvedBySignatureUrl: session.reviewerSignature,
     },
     create: {
       testSessionId: session.id,
       reportNumber,
       pdfUrl: '/uploads/reports/' + pdfFileName,
+      docxUrl: '/uploads/reports/' + docxFileName,
       approvedBySignatureUrl: session.reviewerSignature,
     }
   });
