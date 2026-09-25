@@ -67,7 +67,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('token', authToken);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await fetch('http://localhost:3001/api/auth/logout', { method: 'POST', credentials: 'include' });
+    } catch (e) {
+      console.error('Logout error', e);
+    }
     setUser(null);
     setToken(null);
     localStorage.removeItem('token');

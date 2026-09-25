@@ -11,6 +11,7 @@ import { InstrumentForm } from './pages/InstrumentForm';
 import { TestSessionList } from './pages/TestSessionList';
 import { TestSessionFlow } from './pages/TestSessionFlow';
 import { SupervisorReview } from './pages/SupervisorReview';
+import { Reports } from './pages/Reports';
 
 function App() {
   return (
@@ -43,6 +44,8 @@ function App() {
               <Route element={<ProtectedRoute allowedRoles={['MANUFACTURER']} />}>
                 <Route path="/manufacturer-only" element={<div>Manufacturer Only Page</div>} />
               </Route>
+              
+              <Route path="/reports" element={<Reports />} />
               
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
             </Route>
