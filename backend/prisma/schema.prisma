@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+
+
+model User {
+  id                      String   @id @default(uuid())
+  name                    String
+  email                   String   @unique
+  passwordHash            String
+  role                    String
+  
+  // Lab Officer / Admin specific
+  labName                 String?
+  labRegId                String?
+  designation             String?
+  employeeCode            String?
+  
+  // Manufacturer specific
+  companyName             String?
+  manufacturerLicenseNo   String?
+  
+  status                  String @default("PENDING")
+  createdAt               DateTime   @default(now())
+  
+  instrumentsRegistered   Instrument[] @relation("RegisteredBy")
+  instrumentsManufactured Instrument[] @relation("Manufacturer")
+  sessionsCreated         TestSession[] @relation("LabOfficer")
+  sessionsReviewed        TestSession[] @relation("ReviewedBy")
+  attachmentsUploaded     Attachment[]  @relation("UploadedBy")
+}
+
+model Instrument {
+  id                      String         @id @default(uuid())
+  modelName               String
+  manufacturerId          String?
+  manufacturer            User?          @relation("Manufacturer", fields: [manufacturerId], references: [id])
+  manufacturerName        String?        // Fallback if not registered in system
+  instrumentType          String
+  serialNumber            String         @unique
+  maxCapacity             Float          // In kg or g, keep consistent
+  minCapacity             Float
+  eValue                  Float          // Verification scale interval (e)
+  accuracyClass           String
+  
+  registeredById          String
+  registeredBy            User           @relation("RegisteredBy", fields: [registeredById], references: [id])
+  createdAt               DateTime       @default(now())
+
+  testSessions            TestSession[]
+}
+
+model TestSession {
+  id                      String        @id @default(uuid())
+  instrumentId            String
+  instrument              Instrument    @relation(fields: [instrumentId], references: [id])
+  
+  labOfficerId            String
+  labOfficer              User          @relation("LabOfficer", fields: [labOfficerId], references: [id])
+  
+  labTemperature          Float?
+  labHumidity             Float?
+  labAtmosphericPressure  Float?
+  
+  status                  String @default("DRAFT")
+  createdAt               DateTime      @default(now())
+  submittedAt             DateTime?
+  
+  reviewedById            String?
+  reviewedBy              User?         @relation("ReviewedBy", fields: [reviewedById], references: [id])
+  reviewedAt              DateTime?
+  reviewNotes             String?
+  reviewerSignature       String?       // Base64 PNG signature
+  
+  testResults             TestResult[]
+  report                  Report?
+  attachments             Attachment[]
+}
+
+model TestResult {
+  id                  String           @id @default(uuid())
+  testSessionId       String
+  testSession         TestSession      @relation(fields: [testSessionId], references: [id])
+  testType            String           // e.g. "REPEATABILITY", "ECCENTRICITY", "WEIGHING_PERFORMANCE", "ZERO_SETTING"
+  
+  rawReadings         String           // Array of {loadPoint, indicatedValue, referenceValue}
+  calculatedError     Float?           // Maximum error found during this test
+  permissibleError    Float?           // MPE for this test
+  result              String
+  notes               String?
+}
+
+model Report {
+  id                          String      @id @default(uuid())
+  testSessionId               String      @unique
+  testSession                 TestSession @relation(fields: [testSessionId], references: [id])
+  reportNumber                String      @unique
+  
+  pdfUrl                      String?
+  docxUrl                     String?
+  testedBySignatureUrl        String?
+  approvedBySignatureUrl      String?
+  
+  generatedAt                 DateTime    @default(now())
+}
+
+model Attachment {
+  id              String      @id @default(uuid())
+  testSessionId   String
+  testSession     TestSession @relation(fields: [testSessionId], references: [id])
+  fileUrl         String
+  fileType        String
+  
+  uploadedById    String
+  uploadedBy      User        @relation("UploadedBy", fields: [uploadedById], references: [id])
+  uploadedAt      DateTime    @default(now())
+}
