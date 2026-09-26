@@ -2,28 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ArrowLeft, CheckCircle2, Scale, Calendar, User, FileText, Info } from 'lucide-react';
-
-function calculateMPE(accClass: string, e: number, load: number): number {
-  const m = load / e;
-  if (accClass === 'I') {
-    if (m >= 0 && m <= 50000) return 1 * e;
-    if (m > 50000 && m <= 200000) return 2 * e;
-    return 3 * e;
-  } else if (accClass === 'II') {
-    if (m >= 0 && m <= 5000) return 1 * e;
-    if (m > 5000 && m <= 20000) return 2 * e;
-    return 3 * e;
-  } else if (accClass === 'III') {
-    if (m >= 0 && m <= 500) return 1 * e;
-    if (m > 500 && m <= 2000) return 2 * e;
-    return 3 * e;
-  } else if (accClass === 'IIII') {
-    if (m >= 0 && m <= 50) return 1 * e;
-    if (m > 50 && m <= 200) return 2 * e;
-    return 3 * e;
-  }
-  return 3 * e;
-}
+import { calculatePermissibleError, AccuracyClass } from '../utils/oiml-calculator';
 
 export const InstrumentDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -159,7 +138,7 @@ export const InstrumentDetail: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-blue-50 text-gray-700">
               {[instrument.minCapacity, instrument.maxCapacity / 2, instrument.maxCapacity].map((load, idx) => {
-                const mpe = calculateMPE(instrument.accuracyClass, instrument.eValue, load);
+                const mpe = calculatePermissibleError(instrument.accuracyClass as AccuracyClass, instrument.eValue, load);
                 return (
                   <tr key={idx}>
                     <td className="px-6 py-3">{load}</td>
