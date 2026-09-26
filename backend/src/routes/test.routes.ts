@@ -223,8 +223,13 @@ router.get('/:id/report', authenticateToken, async (req: AuthRequest, res) => {
       return res.status(404).json({ error: 'Report not found' });
     }
     
-    const filePath = path.join(__dirname, '../../', report.pdfUrl);
-    res.download(filePath);
+    const filePath = path.join(__dirname, '../../', report.pdfUrl.replace(/^\//, ''));
+    res.download(filePath, (err) => {
+      if (err) {
+        console.error('Express download error:', err);
+        if (!res.headersSent) res.status(500).json({ error: 'Failed to download file' });
+      }
+    });
   } catch (error) {
     console.error('Download report error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -241,8 +246,13 @@ router.get('/:id/report/docx', authenticateToken, async (req: AuthRequest, res) 
       return res.status(404).json({ error: 'Report not found' });
     }
     
-    const filePath = path.join(__dirname, '../../', report.docxUrl);
-    res.download(filePath);
+    const filePath = path.join(__dirname, '../../', report.docxUrl.replace(/^\//, ''));
+    res.download(filePath, (err) => {
+      if (err) {
+        console.error('Express download error:', err);
+        if (!res.headersSent) res.status(500).json({ error: 'Failed to download file' });
+      }
+    });
   } catch (error) {
     console.error('Download report error:', error);
     res.status(500).json({ error: 'Internal server error' });
