@@ -59,6 +59,26 @@ export const Login: React.FC = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {import.meta.env.DEV && (
+              <div className="mb-4 p-3 bg-gray-50 border border-border rounded-md">
+                <label className="block text-xs font-medium text-textSecondary mb-1">Quick Login (Dev Only)</label>
+                <select 
+                  className="input-field py-1 text-sm bg-white"
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      setEmail(e.target.value);
+                      setPassword('password123');
+                    }
+                  }}
+                >
+                  <option value="">Select a seeded user...</option>
+                  <option value="admin@metrology.gov.in">Admin (Supervisor)</option>
+                  <option value="rajesh.officer@metrology.gov.in">Officer (Rajesh)</option>
+                  <option value="sneha.officer@metrology.gov.in">Officer (Sneha)</option>
+                  <option value="contact@acmescales.in">Manufacturer (Acme)</option>
+                </select>
+              </div>
+            )}
             <div>
               <label className="block text-sm font-medium text-textSecondary mb-1">Email Address</label>
               <input
