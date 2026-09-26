@@ -328,8 +328,18 @@ export async function generateReports(sessionId: string) {
 
   const labRegId = session.labOfficer.labRegId || 'LAB';
   const year = new Date().getFullYear();
-  const count = await prisma.report.count() + 1;
-  const sequential = String(count).padStart(4, '0');
+  const lastReport = await prisma.report.findFirst({
+    orderBy: { generatedAt: 'desc' }
+  });
+  let nextSeq = 1;
+  if (lastReport && lastReport.reportNumber) {
+    const parts = lastReport.reportNumber.split('/');
+    const lastSeq = parseInt(parts[parts.length - 1], 10);
+    if (!isNaN(lastSeq)) {
+      nextSeq = lastSeq + 1;
+    }
+  }
+  const sequential = String(nextSeq).padStart(4, '0');
   const reportNumber = 'NAWI/' + labRegId + '/' + year + '/' + sequential;
 
   const isPass = session.status === 'APPROVED'; // Based on overall review, which requires all PASS
