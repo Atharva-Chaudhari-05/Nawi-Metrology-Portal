@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, User as UserIcon, LayoutDashboard, Scale, FileText, CheckSquare, Settings } from 'lucide-react';
+import { LogOut, User as UserIcon, LayoutDashboard, Scale, FileText, CheckSquare } from 'lucide-react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 
 export const AppLayout: React.FC = () => {
@@ -12,7 +12,6 @@ export const AppLayout: React.FC = () => {
     { name: 'Instruments', path: '/instruments', icon: Scale },
     { name: 'Test Sessions', path: '/test-sessions', icon: CheckSquare },
     { name: 'Reports', path: '/reports', icon: FileText },
-    ...(user?.role === 'ADMIN' ? [{ name: 'Settings', path: '/settings', icon: Settings }] : []),
   ];
 
   const getPageTitle = () => {

@@ -100,7 +100,7 @@ export const TestSessionList: React.FC = () => {
                         Review
                       </Link>
                     )}
-                    <button className="text-textSecondary hover:text-textPrimary">Details</button>
+                    <Link to={`/test-sessions/${s.id}`} className="text-textSecondary hover:text-textPrimary">Details</Link>
                   </td>
                 </tr>
               ))}

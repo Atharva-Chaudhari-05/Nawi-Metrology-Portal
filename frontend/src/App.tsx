@@ -12,8 +12,8 @@ import { TestSessionList } from './pages/TestSessionList';
 import { TestSessionFlow } from './pages/TestSessionFlow';
 import { SupervisorReview } from './pages/SupervisorReview';
 import { Reports } from './pages/Reports';
-import { Settings } from './pages/Settings';
-
+import { InstrumentDetail } from './pages/InstrumentDetail';
+import { TestSessionDetail } from './pages/TestSessionDetail';
 function App() {
   return (
     <AuthProvider>
@@ -28,6 +28,7 @@ function App() {
               
               {/* Instrument routes - Only Officer and Admin can register */}
               <Route path="/instruments" element={<InstrumentList />} />
+              <Route path="/instruments/:id" element={<InstrumentDetail />} />
               <Route element={<ProtectedRoute allowedRoles={['OFFICER', 'ADMIN']} />}>
                 <Route path="/instruments/new" element={<InstrumentForm />} />
               </Route>
@@ -37,6 +38,7 @@ function App() {
               <Route element={<ProtectedRoute allowedRoles={['OFFICER', 'ADMIN']} />}>
                 <Route path="/test-sessions/new" element={<TestSessionFlow />} />
               </Route>
+              <Route path="/test-sessions/:id" element={<TestSessionDetail />} />
               <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
                 <Route path="/test-sessions/:id/review" element={<SupervisorReview />} />
               </Route>
@@ -47,9 +49,7 @@ function App() {
               </Route>
               
               <Route path="/reports" element={<Reports />} />
-              <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
-                <Route path="/settings" element={<Settings />} />
-              </Route>
+
               
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
             </Route>
