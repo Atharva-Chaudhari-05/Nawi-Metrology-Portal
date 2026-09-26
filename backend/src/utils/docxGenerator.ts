@@ -140,6 +140,8 @@ export async function createDocxFile(data: any, uploadsDir: string, fileName: st
           createInfoRow("Max Capacity", `${data.instrument.maxCapacity} kg`),
           createInfoRow("Min Capacity", `${data.instrument.minCapacity} kg`),
           createInfoRow("Verification Scale Interval (e)", `${data.instrument.eValue} kg`),
+          createInfoRow("Registration Date", new Date(data.instrument.createdAt).toLocaleDateString()),
+          createInfoRow("Registered By", data.instrument.registeredBy?.name || 'Unknown'),
           
           new Paragraph({ text: "Test Conditions", heading: HeadingLevel.HEADING_3, spacing: { before: 400, after: 200 } }),
           createInfoRow("Testing Date", new Date(data.testSession.createdAt).toLocaleDateString()),

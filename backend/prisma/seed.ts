@@ -165,6 +165,7 @@ async function main() {
       submittedAt: new Date(),
       reviewedById: admin.id,
       reviewedAt: new Date(),
+      reviewerSignature: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iNjAiPjxwYXRoIGQ9Ik0xMCw0MCBRMzAsMTAgNTAsNDAgVDkwLDQwIFQxMzAsMzAgVDE3MCw0MCIgc3Ryb2tlPSIjMGYxNzJhIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz48L3N2Zz4=',
       testResults: {
         create: [
           {
@@ -193,6 +194,7 @@ async function main() {
       submittedAt: new Date(),
       reviewedById: admin.id,
       reviewedAt: new Date(),
+      reviewerSignature: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iNjAiPjxwYXRoIGQ9Ik0xMCw0MCBRMzAsMTAgNTAsNDAgVDkwLDQwIFQxMzAsMzAgVDE3MCw0MCIgc3Ryb2tlPSIjMGYxNzJhIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz48L3N2Zz4=',
       reviewNotes: 'Failed repeatability at max capacity.',
       testResults: {
         create: [
@@ -264,7 +266,17 @@ async function main() {
       submittedAt: new Date(),
       testResults: {
         create: [
-          { testType: 'WEIGHING_PERFORMANCE', result: 'PASS', calculatedError: 0, permissibleError: 1, rawReadings: '[]' }
+          {
+            testType: 'WEIGHING_PERFORMANCE',
+            result: 'PASS',
+            calculatedError: 0,
+            permissibleError: 1,
+            rawReadings: JSON.stringify([
+              { loadPoint: 5, indicatedValue: 5, referenceValue: 5 },
+              { loadPoint: 10, indicatedValue: 10, referenceValue: 10 },
+              { loadPoint: 20, indicatedValue: 20, referenceValue: 20 }
+            ])
+          }
         ]
       }
     }
@@ -278,7 +290,17 @@ async function main() {
       submittedAt: new Date(),
       testResults: {
         create: [
-          { testType: 'REPEATABILITY', result: 'FAIL', calculatedError: 0.5, permissibleError: 0.15, rawReadings: '[]' }
+          {
+            testType: 'REPEATABILITY',
+            result: 'FAIL',
+            calculatedError: 0.5,
+            permissibleError: 0.15,
+            rawReadings: JSON.stringify([
+              { loadPoint: 250, indicatedValue: 250, referenceValue: 250 },
+              { loadPoint: 250, indicatedValue: 250.2, referenceValue: 250 },
+              { loadPoint: 250, indicatedValue: 250.5, referenceValue: 250 }
+            ])
+          }
         ]
       }
     }
@@ -292,7 +314,16 @@ async function main() {
       submittedAt: new Date(),
       testResults: {
         create: [
-          { testType: 'WEIGHING_PERFORMANCE', result: 'PASS', calculatedError: 0, permissibleError: 0, rawReadings: '[]' }
+          {
+            testType: 'WEIGHING_PERFORMANCE',
+            result: 'PASS',
+            calculatedError: 0,
+            permissibleError: 0,
+            rawReadings: JSON.stringify([
+              { loadPoint: 1, indicatedValue: 1, referenceValue: 1 },
+              { loadPoint: 5, indicatedValue: 5, referenceValue: 5 }
+            ])
+          }
         ]
       }
     }
@@ -309,6 +340,7 @@ async function main() {
       submittedAt: new Date(),
       reviewedById: admin.id,
       reviewedAt: new Date(),
+      reviewerSignature: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iNjAiPjxwYXRoIGQ9Ik0xMCw0MCBRMzAsMTAgNTAsNDAgVDkwLDQwIFQxMzAsMzAgVDE3MCw0MCIgc3Ryb2tlPSIjMGYxNzJhIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz48L3N2Zz4=',
       testResults: {
         create: [
           {
@@ -335,10 +367,21 @@ async function main() {
       submittedAt: new Date(),
       reviewedById: admin.id,
       reviewedAt: new Date(),
+      reviewerSignature: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iNjAiPjxwYXRoIGQ9Ik0xMCw0MCBRMzAsMTAgNTAsNDAgVDkwLDQwIFQxMzAsMzAgVDE3MCw0MCIgc3Ryb2tlPSIjMGYxNzJhIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz48L3N2Zz4=',
       reviewNotes: 'Values fluctuate widely at high loads.',
       testResults: {
         create: [
-          { testType: 'WEIGHING_PERFORMANCE', result: 'FAIL', calculatedError: 3, permissibleError: 1, rawReadings: '[]' }
+          {
+            testType: 'WEIGHING_PERFORMANCE',
+            result: 'FAIL',
+            calculatedError: 3,
+            permissibleError: 1,
+            rawReadings: JSON.stringify([
+              { loadPoint: 10, indicatedValue: 10, referenceValue: 10 },
+              { loadPoint: 50, indicatedValue: 51, referenceValue: 50 },
+              { loadPoint: 100, indicatedValue: 103, referenceValue: 100 }
+            ])
+          }
         ]
       }
     }
@@ -347,7 +390,9 @@ async function main() {
   console.log('Test sessions created. Generating reports...');
   
   await generateReports(session1.id);
+  await generateReports(session2.id);
   await generateReports(session7.id);
+  await generateReports(session8.id);
 
   console.log('Reports generated successfully.');
   console.log('Seeding complete.');

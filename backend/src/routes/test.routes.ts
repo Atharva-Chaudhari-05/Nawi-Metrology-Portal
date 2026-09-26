@@ -198,7 +198,7 @@ router.patch('/:id/review', authenticateToken, requireRole(['ADMIN']), async (re
       }
     });
 
-    if (newStatus === 'APPROVED') {
+    if (newStatus === 'APPROVED' || newStatus === 'REJECTED') {
       try {
         await generateReports(sessionId);
       } catch (reportErr) {
@@ -280,6 +280,12 @@ router.patch('/:id/revoke', authenticateToken, requireRole(['ADMIN']), async (re
         reviewNotes: `[REVOKED]: ${reason}`
       }
     });
+
+    try {
+      await generateReports(sessionId);
+    } catch (reportErr) {
+      console.error('Failed to generate report on revoke:', reportErr);
+    }
 
     res.json({ message: 'Session revoked', session: updated });
   } catch (error) {

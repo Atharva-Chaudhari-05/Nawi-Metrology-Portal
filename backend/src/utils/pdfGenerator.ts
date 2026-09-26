@@ -222,6 +222,8 @@ function getReportHtml(data: any): string {
         <div class="info-row"><span class="info-label">Max Capacity</span><span class="info-val">${data.instrument.maxCapacity} kg</span></div>
         <div class="info-row"><span class="info-label">Min Capacity</span><span class="info-val">${data.instrument.minCapacity} kg</span></div>
         <div class="info-row"><span class="info-label">Verification Scale Interval (e)</span><span class="info-val">${data.instrument.eValue} kg</span></div>
+        <div class="info-row"><span class="info-label">Registration Date</span><span class="info-val">${new Date(data.instrument.createdAt).toLocaleDateString()}</span></div>
+        <div class="info-row"><span class="info-label">Registered By</span><span class="info-val">${data.instrument.registeredBy?.name || 'Unknown'}</span></div>
       </div>
       <div>
         <div class="section-title">Test Conditions</div>
@@ -317,7 +319,12 @@ export async function generateReports(sessionId: string) {
   const session = await prisma.testSession.findUnique({
     where: { id: sessionId },
     include: {
-      instrument: true,
+      instrument: {
+        include: {
+          manufacturer: true,
+          registeredBy: true
+        }
+      },
       labOfficer: true,
       reviewedBy: true,
       testResults: true
