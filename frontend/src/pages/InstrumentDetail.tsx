@@ -1,7 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeft, CheckCircle2, Scale, Calendar, User, FileText } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Scale, Calendar, User, FileText, Info } from 'lucide-react';
+
+function calculateMPE(accClass: string, e: number, load: number): number {
+  const m = load / e;
+  if (accClass === 'I') {
+    if (m >= 0 && m <= 50000) return 1 * e;
+    if (m > 50000 && m <= 200000) return 2 * e;
+    return 3 * e;
+  } else if (accClass === 'II') {
+    if (m >= 0 && m <= 5000) return 1 * e;
+    if (m > 5000 && m <= 20000) return 2 * e;
+    return 3 * e;
+  } else if (accClass === 'III') {
+    if (m >= 0 && m <= 500) return 1 * e;
+    if (m > 500 && m <= 2000) return 2 * e;
+    return 3 * e;
+  } else if (accClass === 'IIII') {
+    if (m >= 0 && m <= 50) return 1 * e;
+    if (m > 50 && m <= 200) return 2 * e;
+    return 3 * e;
+  }
+  return 3 * e;
+}
 
 export const InstrumentDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -112,6 +134,42 @@ export const InstrumentDetail: React.FC = () => {
               <span className="font-medium">{new Date(instrument.createdAt).toLocaleDateString()}</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Applicable OIML R-76 Rules */}
+      <div className="bg-blue-50 rounded-xl shadow-sm border border-blue-100 p-6 mb-8">
+        <div className="flex items-center space-x-2 text-blue-800 mb-4">
+          <Info className="h-5 w-5" />
+          <h3 className="font-medium text-lg">Applicable OIML R-76 Rules</h3>
+        </div>
+        <p className="text-sm text-blue-900 mb-4">
+          This instrument is classified as <strong>Accuracy Class {instrument.accuracyClass}</strong>. 
+          The Maximum Permissible Error (MPE) is calculated dynamically based on the applied load and the Verification Scale Interval (e = {instrument.eValue} kg), 
+          according to the exact OIML R-76 stepped tolerance limits.
+        </p>
+        <div className="overflow-x-auto bg-white rounded-lg border border-blue-100">
+          <table className="w-full text-left text-sm whitespace-nowrap">
+            <thead className="bg-blue-50 border-b border-blue-100">
+              <tr>
+                <th className="px-6 py-3 font-medium text-blue-800">Example Load (kg)</th>
+                <th className="px-6 py-3 font-medium text-blue-800">Load in 'e' units (m)</th>
+                <th className="px-6 py-3 font-medium text-blue-800">Allowed MPE (kg)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-blue-50 text-gray-700">
+              {[instrument.minCapacity, instrument.maxCapacity / 2, instrument.maxCapacity].map((load, idx) => {
+                const mpe = calculateMPE(instrument.accuracyClass, instrument.eValue, load);
+                return (
+                  <tr key={idx}>
+                    <td className="px-6 py-3">{load}</td>
+                    <td className="px-6 py-3">{load / instrument.eValue} e</td>
+                    <td className="px-6 py-3 font-mono">±{mpe}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
 

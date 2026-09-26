@@ -137,6 +137,20 @@ async function main() {
     },
   });
 
+  const inst4 = await prisma.instrument.create({
+    data: {
+      modelName: 'Basic-Scale-100',
+      instrumentType: 'MECHANICAL_SCALE',
+      serialNumber: 'SN-BS100-4444',
+      maxCapacity: 100, // 100kg
+      minCapacity: 10,
+      eValue: 1,        // e = 1kg
+      accuracyClass: 'IIII',
+      manufacturerId: manufacturer2.id,
+      registeredById: officer2.id,
+    },
+  });
+
   console.log('Instruments created.');
   
   const session1 = await prisma.testSession.create({

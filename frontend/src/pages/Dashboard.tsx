@@ -1,9 +1,48 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Scale } from 'lucide-react';
+import { Scale, CheckSquare, Clock, TrendingUp } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
+  const [stats, setStats] = useState({
+    totalSessions: 0,
+    pendingReviews: 0,
+    passRate: 0,
+    instrumentsCount: 0
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [sessRes, instRes] = await Promise.all([
+          fetch('/api/test-sessions', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('/api/instruments', { headers: { 'Authorization': `Bearer ${token}` } })
+        ]);
+
+        if (sessRes.ok && instRes.ok) {
+          const sessions = await sessRes.json();
+          const instruments = await instRes.json();
+
+          const totalSessions = sessions.length;
+          const pendingReviews = sessions.filter((s: any) => s.status === 'SUBMITTED').length;
+          
+          const completedSessions = sessions.filter((s: any) => s.status === 'APPROVED' || s.status === 'REJECTED');
+          const approvedSessions = sessions.filter((s: any) => s.status === 'APPROVED').length;
+          const passRate = completedSessions.length > 0 ? Math.round((approvedSessions / completedSessions.length) * 100) : 0;
+
+          setStats({
+            totalSessions,
+            pendingReviews,
+            passRate,
+            instrumentsCount: instruments.length
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch stats', err);
+      }
+    };
+    if (token) fetchStats();
+  }, [token]);
 
   return (
     <>
@@ -21,7 +60,42 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Stats / Info Grid */}
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="card p-6 flex flex-col items-center text-center">
+          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-3">
+            <Scale className="h-6 w-6" />
+          </div>
+          <h4 className="text-sm font-medium text-textSecondary uppercase tracking-wider mb-1">Instruments</h4>
+          <p className="text-3xl font-bold text-textPrimary">{stats.instrumentsCount}</p>
+        </div>
+
+        <div className="card p-6 flex flex-col items-center text-center">
+          <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mb-3">
+            <CheckSquare className="h-6 w-6" />
+          </div>
+          <h4 className="text-sm font-medium text-textSecondary uppercase tracking-wider mb-1">Total Sessions</h4>
+          <p className="text-3xl font-bold text-textPrimary">{stats.totalSessions}</p>
+        </div>
+
+        <div className="card p-6 flex flex-col items-center text-center">
+          <div className="w-12 h-12 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center mb-3">
+            <Clock className="h-6 w-6" />
+          </div>
+          <h4 className="text-sm font-medium text-textSecondary uppercase tracking-wider mb-1">Pending Reviews</h4>
+          <p className="text-3xl font-bold text-textPrimary">{stats.pendingReviews}</p>
+        </div>
+
+        <div className="card p-6 flex flex-col items-center text-center">
+          <div className="w-12 h-12 bg-green-50 text-green-600 rounded-full flex items-center justify-center mb-3">
+            <TrendingUp className="h-6 w-6" />
+          </div>
+          <h4 className="text-sm font-medium text-textSecondary uppercase tracking-wider mb-1">Pass Rate</h4>
+          <p className="text-3xl font-bold text-textPrimary">{stats.passRate}%</p>
+        </div>
+      </div>
+
+      {/* Info Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="card p-6 flex flex-col">
           <h4 className="text-sm font-medium text-textSecondary uppercase tracking-wider mb-4">Account Status</h4>
