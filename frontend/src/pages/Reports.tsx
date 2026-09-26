@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Download, Filter, Search } from 'lucide-react';
+import { FileText, Download, Filter, Search, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 interface Report {
@@ -196,7 +196,14 @@ export const Reports: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {loading ? (
-                <tr><td colSpan={7} className="px-6 py-8 text-center text-gray-500">Loading reports...</td></tr>
+                <tr>
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                    <div className="flex flex-col items-center justify-center space-y-3">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary/70" />
+                      <p className="animate-pulse">Loading reports...</p>
+                    </div>
+                  </td>
+                </tr>
               ) : filteredReports.length === 0 ? (
                 <tr><td colSpan={7} className="px-6 py-8 text-center text-gray-500">No reports found matching filters.</td></tr>
               ) : (

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
-import { CheckSquare, AlertCircle } from 'lucide-react';
+import { CheckSquare, AlertCircle, Loader2 } from 'lucide-react';
 
 export const TestSessionList: React.FC = () => {
   const [sessions, setSessions] = useState<any[]>([]);
@@ -32,7 +32,14 @@ export const TestSessionList: React.FC = () => {
     fetchSessions();
   }, [token]);
 
-  if (loading) return <div className="p-8 text-center text-textSecondary animate-pulse">Loading sessions...</div>;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-textSecondary">
+        <Loader2 className="h-8 w-8 animate-spin mb-4 text-primary/70" />
+        <p className="animate-pulse">Loading sessions...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

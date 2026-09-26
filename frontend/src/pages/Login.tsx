@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Scale } from 'lucide-react';
+import { GovLogo } from '../components/GovLogo';
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -43,7 +43,7 @@ export const Login: React.FC = () => {
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
           <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mb-4 shadow-sm">
-            <Scale className="text-white h-6 w-6" />
+            <GovLogo className="text-white h-7 w-7" />
           </div>
           <h1 className="text-2xl font-serif text-textPrimary text-center">Ministry of Consumer Affairs</h1>
           <h2 className="text-sm text-textSecondary uppercase tracking-wider mt-1">Legal Metrology Dept</h2>

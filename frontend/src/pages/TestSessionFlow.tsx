@@ -402,7 +402,7 @@ export const TestSessionFlow: React.FC = () => {
                       )}
                       <td className="px-6 py-4">
                         {hasData && (
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${pass ? 'bg-success/10 text-success' : 'bg-fail/10 text-fail'}`}>
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium animate-pop-in ${pass ? 'bg-success/10 text-success' : 'bg-fail/10 text-fail'}`}>
                             {pass ? <CheckCircle2 className="w-3 h-3 mr-1" /> : <XCircle className="w-3 h-3 mr-1" />}
                             {pass ? 'PASS' : 'FAIL'}
                           </span>

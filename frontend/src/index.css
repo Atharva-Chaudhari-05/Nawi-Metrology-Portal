@@ -36,14 +36,22 @@
   }
   
   .btn-primary {
-    @apply px-4 py-2 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+    @apply px-4 py-2 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-all active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background shadow-sm hover:shadow;
   }
   
   .btn-secondary {
-    @apply px-4 py-2 bg-surface border border-border text-textPrimary rounded-md font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+    @apply px-4 py-2 bg-surface border border-border text-textPrimary rounded-md font-medium hover:bg-gray-50 transition-all active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
   }
 
   .card {
     @apply bg-surface border border-border rounded-lg shadow-sm;
+  }
+  
+  @keyframes pop-in {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .animate-pop-in {
+    animation: pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   }
 }

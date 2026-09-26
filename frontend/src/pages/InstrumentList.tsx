@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
-import { Scale, Plus, AlertCircle, FileText, CheckCircle2 } from 'lucide-react';
+import { Scale, Plus, AlertCircle, FileText, CheckCircle2, Loader2 } from 'lucide-react';
 
 interface Instrument {
   id: string;
@@ -44,7 +44,12 @@ export const InstrumentList: React.FC = () => {
   }, [token]);
 
   if (loading) {
-    return <div className="p-8 text-center text-textSecondary animate-pulse">Loading instruments...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-textSecondary">
+        <Loader2 className="h-8 w-8 animate-spin mb-4 text-primary/70" />
+        <p className="animate-pulse">Loading instruments...</p>
+      </div>
+    );
   }
 
   return (

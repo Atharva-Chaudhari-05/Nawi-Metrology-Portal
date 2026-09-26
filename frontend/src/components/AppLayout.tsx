@@ -2,6 +2,7 @@ import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { LogOut, User as UserIcon, LayoutDashboard, Scale, FileText, CheckSquare } from 'lucide-react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
+import { GovLogo } from './GovLogo';
 
 export const AppLayout: React.FC = () => {
   const { user, logout } = useAuth();
@@ -29,8 +30,8 @@ export const AppLayout: React.FC = () => {
       <aside className="w-64 bg-surface border-r border-border flex flex-col justify-between shrink-0">
         <div>
           <div className="p-6 border-b border-border flex items-center space-x-3">
-            <div className="w-10 h-10 bg-primary rounded-md flex items-center justify-center shrink-0">
-              <Scale className="text-white h-5 w-5" />
+            <div className="w-10 h-10 bg-primary rounded-md flex items-center justify-center shrink-0 shadow-sm">
+              <GovLogo className="text-white h-6 w-6" />
             </div>
             <div>
               <h1 className="font-serif font-semibold text-textPrimary text-sm leading-tight">Ministry of Consumer Affairs</h1>
@@ -46,10 +47,10 @@ export const AppLayout: React.FC = () => {
                 <Link
                   key={item.name}
                   to={item.path}
-                  className={`flex items-center space-x-3 px-3 py-2.5 rounded-md transition-colors text-sm font-medium ${
+                  className={`flex items-center space-x-3 px-3 py-2.5 rounded-md transition-all duration-200 text-sm font-medium ${
                     isActive 
                       ? 'bg-primary/10 text-primary' 
-                      : 'text-textSecondary hover:bg-gray-50 hover:text-textPrimary'
+                      : 'text-textSecondary hover:bg-gray-50 hover:text-textPrimary hover:translate-x-1'
                   }`}
                 >
                   <Icon className={`h-5 w-5 ${isActive ? 'text-primary' : 'text-textSecondary'}`} />
