@@ -15,6 +15,9 @@ interface Report {
     instrument: {
       modelName: string;
       manufacturerName: string | null;
+      manufacturer?: {
+        name: string;
+      };
     };
   };
 }
@@ -83,7 +86,8 @@ export const Reports: React.FC = () => {
 
   const filteredReports = reports.filter(r => {
     const modelMatch = r.testSession.instrument.modelName.toLowerCase().includes(modelFilter.toLowerCase());
-    const mfgMatch = (r.testSession.instrument.manufacturerName || '').toLowerCase().includes(manufacturerFilter.toLowerCase());
+    const mfgName = r.testSession.instrument.manufacturer?.name || r.testSession.instrument.manufacturerName || '';
+    const mfgMatch = mfgName.toLowerCase().includes(manufacturerFilter.toLowerCase());
     
     // Status is based on the testSession status, which is APPROVED or REJECTED.
     // Assuming APPROVED = Pass, REJECTED = Fail for the final report.
@@ -200,7 +204,7 @@ export const Reports: React.FC = () => {
                   <tr key={report.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 font-medium text-gray-900">{report.reportNumber}</td>
                     <td className="px-6 py-4">{report.testSession.instrument.modelName}</td>
-                    <td className="px-6 py-4">{report.testSession.instrument.manufacturerName || 'N/A'}</td>
+                    <td className="px-6 py-4">{report.testSession.instrument.manufacturer?.name || report.testSession.instrument.manufacturerName || 'N/A'}</td>
                     <td className="px-6 py-4">{new Date(report.testSession.createdAt).toLocaleDateString()}</td>
                     <td className="px-6 py-4">{new Date(report.generatedAt).toLocaleDateString()}</td>
                     <td className="px-6 py-4 text-center">

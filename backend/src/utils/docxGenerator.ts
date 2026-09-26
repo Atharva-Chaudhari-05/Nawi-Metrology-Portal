@@ -133,7 +133,7 @@ export async function createDocxFile(data: any, uploadsDir: string, fileName: st
           }),
           new Paragraph({ text: "Instrument Details", heading: HeadingLevel.HEADING_3, spacing: { before: 200, after: 200 } }),
           createInfoRow("Model", data.instrument.modelName),
-          createInfoRow("Manufacturer", data.instrument.manufacturerName || 'N/A'),
+          createInfoRow("Manufacturer", data.instrument.manufacturer?.name || data.instrument.manufacturerName || 'N/A'),
           createInfoRow("Serial Number", data.instrument.serialNumber),
           createInfoRow("Type", data.instrument.instrumentType),
           createInfoRow("Accuracy Class", data.instrument.accuracyClass),

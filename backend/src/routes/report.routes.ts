@@ -43,11 +43,11 @@ router.get('/', authenticateToken, async (req: AuthRequest, res) => {
             }
           }
         },
-        include: { testSession: { include: { instrument: true } } }
+        include: { testSession: { include: { instrument: { include: { manufacturer: true } } } } }
       });
     } else {
       reports = await prisma.report.findMany({
-        include: { testSession: { include: { instrument: true, labOfficer: true, reviewedBy: true } } }
+        include: { testSession: { include: { instrument: { include: { manufacturer: true } }, labOfficer: true, reviewedBy: true } } }
       });
     }
 

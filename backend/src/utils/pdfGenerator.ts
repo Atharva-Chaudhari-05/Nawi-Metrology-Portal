@@ -215,7 +215,7 @@ function getReportHtml(data: any): string {
       <div>
         <div class="section-title">Instrument Details</div>
         <div class="info-row"><span class="info-label">Model</span><span class="info-val">${data.instrument.modelName}</span></div>
-        <div class="info-row"><span class="info-label">Manufacturer</span><span class="info-val">${data.instrument.manufacturerName || 'N/A'}</span></div>
+        <div class="info-row"><span class="info-label">Manufacturer</span><span class="info-val">${data.instrument.manufacturer?.name || data.instrument.manufacturerName || 'N/A'}</span></div>
         <div class="info-row"><span class="info-label">Serial Number</span><span class="info-val">${data.instrument.serialNumber}</span></div>
         <div class="info-row"><span class="info-label">Type</span><span class="info-val">${data.instrument.instrumentType}</span></div>
         <div class="info-row"><span class="info-label">Accuracy Class</span><span class="info-val">${data.instrument.accuracyClass}</span></div>
