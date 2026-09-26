@@ -170,11 +170,11 @@ async function main() {
           {
             testType: 'WEIGHING_PERFORMANCE',
             rawReadings: JSON.stringify([
-              { loadPoint: 10, indicatedValue: 10.05, referenceValue: 10 },
-              { loadPoint: 250, indicatedValue: 250.05, referenceValue: 250 },
-              { loadPoint: 500, indicatedValue: 500.1, referenceValue: 500 }
+              { loadPoint: 10, indicatedValue: 10.04, referenceValue: 10, calculatedError: 0.04, mpe: 0.05, result: 'PASS' },
+              { loadPoint: 250, indicatedValue: 250.02, referenceValue: 250, calculatedError: 0.02, mpe: 0.05, result: 'PASS' },
+              { loadPoint: 500, indicatedValue: 500.03, referenceValue: 500, calculatedError: 0.03, mpe: 0.05, result: 'PASS' }
             ]),
-            calculatedError: 0.1,
+            calculatedError: 0.04,
             permissibleError: 0.15,
             result: 'PASS',
           }
@@ -302,13 +302,26 @@ async function main() {
     data: {
       instrumentId: inst3.id,
       labOfficerId: officer1.id,
+      labTemperature: 28.0,
+      labHumidity: 45,
+      labAtmosphericPressure: 1010,
       status: 'APPROVED',
       submittedAt: new Date(),
       reviewedById: admin.id,
       reviewedAt: new Date(),
       testResults: {
         create: [
-          { testType: 'WEIGHING_PERFORMANCE', result: 'PASS', calculatedError: 0, permissibleError: 10, rawReadings: '[]' }
+          {
+            testType: 'WEIGHING_PERFORMANCE',
+            result: 'PASS',
+            calculatedError: 0,
+            permissibleError: 10,
+            rawReadings: JSON.stringify([
+              { loadPoint: 1000, indicatedValue: 1000, referenceValue: 1000, calculatedError: 0, mpe: 5, result: 'PASS' },
+              { loadPoint: 25000, indicatedValue: 25000, referenceValue: 25000, calculatedError: 0, mpe: 10, result: 'PASS' },
+              { loadPoint: 50000, indicatedValue: 50000, referenceValue: 50000, calculatedError: 0, mpe: 15, result: 'PASS' }
+            ])
+          }
         ]
       }
     }
