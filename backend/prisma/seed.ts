@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import { generateReports } from '../src/utils/pdfGenerator';
 
 const prisma = new PrismaClient();
 
@@ -178,12 +179,6 @@ async function main() {
             result: 'PASS',
           }
         ]
-      },
-      report: {
-        create: {
-          reportNumber: `NAWI/CML-DEL-001/${new Date().getFullYear()}/001`,
-          pdfUrl: '/uploads/dummy_report_1.pdf',
-        }
       }
     }
   });
@@ -261,7 +256,87 @@ async function main() {
     }
   });
 
-  console.log('Test sessions created.');
+  const session4 = await prisma.testSession.create({
+    data: {
+      instrumentId: inst4.id,
+      labOfficerId: officer2.id,
+      status: 'SUBMITTED',
+      submittedAt: new Date(),
+      testResults: {
+        create: [
+          { testType: 'WEIGHING_PERFORMANCE', result: 'PASS', calculatedError: 0, permissibleError: 1, rawReadings: '[]' }
+        ]
+      }
+    }
+  });
+
+  const session5 = await prisma.testSession.create({
+    data: {
+      instrumentId: inst1.id,
+      labOfficerId: officer1.id,
+      status: 'SUBMITTED',
+      submittedAt: new Date(),
+      testResults: {
+        create: [
+          { testType: 'REPEATABILITY', result: 'FAIL', calculatedError: 0.5, permissibleError: 0.15, rawReadings: '[]' }
+        ]
+      }
+    }
+  });
+
+  const session6 = await prisma.testSession.create({
+    data: {
+      instrumentId: inst2.id,
+      labOfficerId: officer2.id,
+      status: 'SUBMITTED',
+      submittedAt: new Date(),
+      testResults: {
+        create: [
+          { testType: 'WEIGHING_PERFORMANCE', result: 'PASS', calculatedError: 0, permissibleError: 0, rawReadings: '[]' }
+        ]
+      }
+    }
+  });
+
+  const session7 = await prisma.testSession.create({
+    data: {
+      instrumentId: inst3.id,
+      labOfficerId: officer1.id,
+      status: 'APPROVED',
+      submittedAt: new Date(),
+      reviewedById: admin.id,
+      reviewedAt: new Date(),
+      testResults: {
+        create: [
+          { testType: 'WEIGHING_PERFORMANCE', result: 'PASS', calculatedError: 0, permissibleError: 10, rawReadings: '[]' }
+        ]
+      }
+    }
+  });
+
+  const session8 = await prisma.testSession.create({
+    data: {
+      instrumentId: inst4.id,
+      labOfficerId: officer2.id,
+      status: 'REJECTED',
+      submittedAt: new Date(),
+      reviewedById: admin.id,
+      reviewedAt: new Date(),
+      reviewNotes: 'Values fluctuate widely at high loads.',
+      testResults: {
+        create: [
+          { testType: 'WEIGHING_PERFORMANCE', result: 'FAIL', calculatedError: 3, permissibleError: 1, rawReadings: '[]' }
+        ]
+      }
+    }
+  });
+
+  console.log('Test sessions created. Generating reports...');
+  
+  await generateReports(session1.id);
+  await generateReports(session7.id);
+
+  console.log('Reports generated successfully.');
   console.log('Seeding complete.');
 }
 
