@@ -15,12 +15,14 @@ router.get('/', authenticateToken, async (req: AuthRequest, res) => {
       // Manufacturer sees only their own instruments
       instruments = await prisma.instrument.findMany({
         where: { manufacturerId: id },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
+        include: { manufacturer: true }
       });
     } else {
       // Officer/Admin sees all
       instruments = await prisma.instrument.findMany({
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
+        include: { manufacturer: true }
       });
     }
 
@@ -38,7 +40,13 @@ router.get('/:id', authenticateToken, async (req: AuthRequest, res) => {
     const instrumentId = req.params.id as string;
 
     const instrument = await prisma.instrument.findUnique({
-      where: { id: instrumentId }
+      where: { id: instrumentId },
+      include: {
+        manufacturer: true,
+        testSessions: {
+          orderBy: { createdAt: 'desc' }
+        }
+      }
     });
 
     if (!instrument) {

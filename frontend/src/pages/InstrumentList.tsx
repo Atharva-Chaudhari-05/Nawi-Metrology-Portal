@@ -10,6 +10,7 @@ interface Instrument {
   serialNumber: string;
   accuracyClass: string;
   manufacturerName: string | null;
+  manufacturer?: { name: string };
   createdAt: string;
 }
 
@@ -104,7 +105,7 @@ export const InstrumentList: React.FC = () => {
                     <div className="text-textSecondary text-xs mt-0.5">Class: {inst.accuracyClass}</div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-textPrimary">{inst.manufacturerName || 'N/A'}</span>
+                    <span className="text-textPrimary">{inst.manufacturer?.name || inst.manufacturerName || 'N/A'}</span>
                   </td>
                   <td className="px-6 py-4 text-textSecondary">
                     {new Date(inst.createdAt).toLocaleDateString()}
@@ -119,7 +120,7 @@ export const InstrumentList: React.FC = () => {
                         Start Test
                       </Link>
                     )}
-                    <button className="text-textSecondary hover:text-textPrimary">Details</button>
+                    <Link to={`/instruments/${inst.id}`} className="text-textSecondary hover:text-textPrimary">Details</Link>
                   </td>
                 </tr>
               ))}
