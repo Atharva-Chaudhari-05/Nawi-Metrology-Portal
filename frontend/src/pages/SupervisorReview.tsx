@@ -20,7 +20,7 @@ export const SupervisorReview: React.FC = () => {
   useEffect(() => {
     const fetchSession = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/api/test-sessions/${id}`, {
+        const res = await fetch(`/api/test-sessions/${id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -69,7 +69,7 @@ export const SupervisorReview: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch(`http://localhost:3001/api/test-sessions/${id}/review`, {
+      const res = await fetch(`/api/test-sessions/${id}/review`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -132,7 +132,7 @@ export const SupervisorReview: React.FC = () => {
             <button 
               onClick={async () => {
                 try {
-                  const res = await fetch(`http://localhost:3001/api/test-sessions/${session.id}/report`, {
+                  const res = await fetch(`/api/test-sessions/${session.id}/report`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                   });
                   if (res.ok) {
@@ -160,7 +160,7 @@ export const SupervisorReview: React.FC = () => {
             <button 
               onClick={async () => {
                 try {
-                  const res = await fetch(`http://localhost:3001/api/test-sessions/${session.id}/report/docx`, {
+                  const res = await fetch(`/api/test-sessions/${session.id}/report/docx`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                   });
                   if (res.ok) {

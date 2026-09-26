@@ -6,7 +6,7 @@ interface Report {
   id: string;
   testSessionId: string;
   reportNumber: string;
-  createdAt: string;
+  generatedAt: string;
   pdfUrl: string;
   docxUrl: string;
   testSession: {
@@ -92,7 +92,7 @@ export const Reports: React.FC = () => {
                         statusFilter === 'PASS' ? isPass : !isPass;
 
     let dateMatch = true;
-    const reportDate = new Date(r.createdAt);
+    const reportDate = new Date(r.generatedAt);
     if (dateStart) {
       if (reportDate < new Date(dateStart)) dateMatch = false;
     }
@@ -202,7 +202,7 @@ export const Reports: React.FC = () => {
                     <td className="px-6 py-4">{report.testSession.instrument.modelName}</td>
                     <td className="px-6 py-4">{report.testSession.instrument.manufacturerName || 'N/A'}</td>
                     <td className="px-6 py-4">{new Date(report.testSession.createdAt).toLocaleDateString()}</td>
-                    <td className="px-6 py-4">{new Date(report.createdAt).toLocaleDateString()}</td>
+                    <td className="px-6 py-4">{new Date(report.generatedAt).toLocaleDateString()}</td>
                     <td className="px-6 py-4 text-center">
                       <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                         report.testSession.status === 'APPROVED' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'

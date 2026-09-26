@@ -58,7 +58,7 @@ export const InstrumentForm: React.FC = () => {
         eValue: parseFloat(formData.eValue)
       };
 
-      const res = await fetch('http://localhost:3001/api/instruments', {
+      const res = await fetch('/api/instruments', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

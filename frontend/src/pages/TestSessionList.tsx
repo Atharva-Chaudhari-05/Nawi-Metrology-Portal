@@ -12,7 +12,7 @@ export const TestSessionList: React.FC = () => {
   useEffect(() => {
     const fetchSessions = async () => {
       try {
-        const res = await fetch('http://localhost:3001/api/test-sessions', {
+        const res = await fetch('/api/test-sessions', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();

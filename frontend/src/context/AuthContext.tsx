@@ -38,7 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       try {
-        const res = await fetch('http://localhost:3001/api/auth/me', {
+        const res = await fetch('/api/auth/me', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -69,7 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
-      await fetch('http://localhost:3001/api/auth/logout', { method: 'POST', credentials: 'include' });
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
     } catch (e) {
       console.error('Logout error', e);
     }

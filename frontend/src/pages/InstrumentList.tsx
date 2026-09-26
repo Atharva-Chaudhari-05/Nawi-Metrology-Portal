@@ -22,7 +22,7 @@ export const InstrumentList: React.FC = () => {
   useEffect(() => {
     const fetchInstruments = async () => {
       try {
-        const res = await fetch('http://localhost:3001/api/instruments', {
+        const res = await fetch('/api/instruments', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();

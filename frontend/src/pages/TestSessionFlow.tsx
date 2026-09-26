@@ -49,7 +49,7 @@ export const TestSessionFlow: React.FC = () => {
 
     const init = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/api/instruments/${instrumentId}`, {
+        const res = await fetch(`/api/instruments/${instrumentId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -71,7 +71,7 @@ export const TestSessionFlow: React.FC = () => {
     setError('');
     setIsLoading(true);
     try {
-      const res = await fetch('http://localhost:3001/api/test-sessions', {
+      const res = await fetch('/api/test-sessions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -151,7 +151,7 @@ export const TestSessionFlow: React.FC = () => {
     setIsLoading(true);
     try {
       const currentTest = selectedTests[currentTestIndex];
-      const res = await fetch(`http://localhost:3001/api/test-sessions/${sessionId}/results`, {
+      const res = await fetch(`/api/test-sessions/${sessionId}/results`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -198,7 +198,7 @@ export const TestSessionFlow: React.FC = () => {
     if (!sessionId) return;
     setIsLoading(true);
     try {
-      const res = await fetch(`http://localhost:3001/api/test-sessions/${sessionId}/submit`, {
+      const res = await fetch(`/api/test-sessions/${sessionId}/submit`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${token}` }
       });
