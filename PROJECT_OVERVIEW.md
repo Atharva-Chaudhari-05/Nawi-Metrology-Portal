@@ -54,7 +54,7 @@ The NAWI Metrology Portal is our solution for Smart India Hackathon (SIH) proble
 The database seed script provides these credentials out-of-the-box (All passwords are `password123`):
 * **Admin:** `admin@metrology.gov.in` (Sneha Patel)
 * **Officer:** `rajesh.officer@metrology.gov.in` (Rajesh Kumar)
-* **Manufacturer:** `amit.mfg@techscales.com` (Amit Sharma)
+* **Manufacturer:** `contact@acmescales.in` (Acme Scales India)
 * *(Note: The login page includes a "Quick Login" dropdown for fast dev testing)*
 
 ## Current Project Status
