@@ -259,4 +259,33 @@ router.get('/:id/report/docx', authenticateToken, async (req: AuthRequest, res) 
   }
 });
 
+// PATCH revoke approved session
+router.patch('/:id/revoke', authenticateToken, requireRole(['ADMIN']), async (req: AuthRequest, res) => {
+  try {
+    const sessionId = req.params.id as string;
+    const { reason } = req.body;
+
+    if (!reason) {
+      return res.status(400).json({ error: 'Reason is required for revocation' });
+    }
+
+    const session = await prisma.testSession.findUnique({ where: { id: sessionId } });
+    if (!session) return res.status(404).json({ error: 'Session not found' });
+    if (session.status !== 'APPROVED') return res.status(400).json({ error: 'Only APPROVED sessions can be revoked' });
+
+    const updated = await prisma.testSession.update({
+      where: { id: sessionId },
+      data: {
+        status: 'REJECTED',
+        reviewNotes: `[REVOKED]: ${reason}`
+      }
+    });
+
+    res.json({ message: 'Session revoked', session: updated });
+  } catch (error) {
+    console.error('Revoke session error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 export default router;
